@@ -1,5 +1,5 @@
 <template>
-  <dash />
+  <dash @handle="listThings()" />
   <dc />
   <blah />
 </template>
@@ -16,6 +16,19 @@ export default {
     dash,
     dc,
     blah,
+  },
+  data: function () {
+    return {
+      list: {
+        amount: "",
+      },
+    };
+  },
+  methods: {
+    listThings: function (amount) {
+      this.list.amount = amount;
+      console.log(this.amount);
+    },
   },
 };
 </script>

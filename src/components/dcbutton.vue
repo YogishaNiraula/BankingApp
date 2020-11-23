@@ -20,14 +20,14 @@
           </div>
         </header>
         <section class="modal-card-body">
-          <form @submit.prevent="handleSubmit">
+          <form>
             <label for="title"
               >Title
               <input
                 type="text"
                 class="input"
                 placeholder="E.g Salary"
-                v-model="title"
+                v-model="debitCredit.title"
               />
             </label>
             <label for="remarks"
@@ -35,21 +35,29 @@
               <textarea
                 class="input"
                 placeholder="E.g. Salary got from.."
-                v-model="remarks"
+                v-model="debitCredit.remarks"
               />
             </label>
             <label for="amount"
-              >Amount
+              >Amount(Enter numbers only)
               <input
                 type="numeric"
                 class="input mb-4"
                 placeholder="E.g 100"
-                v-model="amount"
+                v-model.number="debitCredit.amount"
               />
             </label>
-            <button class="button is-success" type="submit">Submit</button>
           </form>
         </section>
+        <footer class="modal-card-foot">
+          <button
+            class="button is-success"
+            @click="handleSubmit()"
+            type="submit"
+          >
+            Submit
+          </button>
+        </footer>
       </div>
     </div>
   </div>
@@ -64,21 +72,32 @@ export default {
       debitCredit: {
         title: "",
         remarks: "",
-        amount: "",
+        amount: 0,
+        type: "",
+        date: new Date(),
+      },
+      clearForm: {
+        title: "",
+        remarks: "",
+        amount: 0,
         type: "",
         date: new Date(),
       },
     };
   },
+  props: ["title", "remarks", "amount", "type"],
   methods: {
     handleSubmit: function (event) {
-      console.log(this.debitCredit);
+      this.$emit("handle", this.$data.amount);
     },
-    determineType: function () {
-      if (amount >= 0) {
-        return (type = "credit");
+  },
+  computed: {
+    determineType: function (amount) {
+      let type = "";
+      if (amount > 0) {
+        return (data[this.debitCredit].type = "credit");
       } else {
-        return (type = "debit");
+        return (this.type = "debit");
       }
     },
   },
