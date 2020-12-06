@@ -9,18 +9,18 @@
     <div class="modal" :class="{ 'is-active': showModal }">
       <div class="modal-background"></div>
       <div class="modal-card">
-        <header class="modal-card-head">
-          <p class="modal-card-title">Debit-Credit</p>
-          <div>
-            <button
-              class="delete"
-              aria-label="close"
-              @click="showModal = false"
-            ></button>
-          </div>
-        </header>
-        <section class="modal-card-body">
-          <form>
+        <form @submit.prevent="handleSubmit">
+          <header class="modal-card-head">
+            <p class="modal-card-title">Debit-Credit</p>
+            <div>
+              <button
+                class="delete"
+                aria-label="close"
+                @click="showModal = false"
+              ></button>
+            </div>
+          </header>
+          <section class="modal-card-body">
             <label for="title"
               >Title
               <input
@@ -47,17 +47,11 @@
                 v-model.number="debitCredit.amount"
               />
             </label>
-          </form>
-        </section>
-        <footer class="modal-card-foot">
-          <button
-            class="button is-success"
-            @click="handleSubmit()"
-            type="submit"
-          >
-            Submit
-          </button>
-        </footer>
+          </section>
+          <footer class="modal-card-foot">
+            <button class="button is-success" type="submit">Submit</button>
+          </footer>
+        </form>
       </div>
     </div>
   </div>
@@ -65,7 +59,7 @@
 
 <script>
 export default {
-  name: "dc",
+  name: "creditForm",
   data: function () {
     return {
       showModal: false,
@@ -74,32 +68,38 @@ export default {
         remarks: "",
         amount: 0,
         type: "",
-        date: new Date(),
-      },
-      clearForm: {
-        title: "",
-        remarks: "",
-        amount: 0,
-        type: "",
-        date: new Date(),
+        date: "",
       },
     };
   },
   props: ["title", "remarks", "amount", "type"],
   methods: {
     handleSubmit: function (event) {
-      this.$emit("handle", this.$data.amount);
+      this.debitCredit.amount = parseFloat(this.debitCredit.amount);
+      const type = this.determineType(this.debitCredit.amount);
+      this.debitCredit.type = type;
+      this.debitCredit.date = new Date();
+      this.$emit("handleFormData", {
+        data: this.debitCredit,
+      });
+      event.target.reset();
+      this.debitCredit = {
+        title: "",
+        remarks: "",
+        amount: 0,
+        type: "",
+      };
+
+      this.showModal = false;
     },
-  },
-  computed: {
     determineType: function (amount) {
-      let type = "";
       if (amount > 0) {
-        return (data[this.debitCredit].type = "credit");
+        return "credit";
       } else {
-        return (this.type = "debit");
+        return "debit";
       }
     },
   },
+  computed: {},
 };
 </script>
