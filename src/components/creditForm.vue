@@ -1,10 +1,10 @@
 <template>
   <div class="flex justify-center p-6">
     <button
-      class="bg-indigo-500 p-2 border-solid border border-black"
+      class="focus:outline-none ring-2 border-2 px-4 py-2 rounded-lg bg-blue-200 text-blue-900 font-medium"
       @click="showModal = true"
     >
-      Debit/Credit
+      Add Entry
     </button>
     <div class="modal" :class="{ 'is-active': showModal }">
       <div class="modal-background"></div>
@@ -58,6 +58,7 @@
 </template>
 
 <script>
+import { transformVNodeArgs } from "vue";
 export default {
   name: "creditForm",
   data: function () {
@@ -72,16 +73,26 @@ export default {
       },
     };
   },
-  props: ["title", "remarks", "amount", "type"],
   methods: {
     handleSubmit: function (event) {
       this.debitCredit.amount = parseFloat(this.debitCredit.amount);
       const type = this.determineType(this.debitCredit.amount);
       this.debitCredit.type = type;
-      this.debitCredit.date = new Date();
-      this.$emit("handleFormData", {
-        data: this.debitCredit,
-      });
+
+      // Formatted Date
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = today.getMonth() + 1;
+      const date = today.getDate();
+
+      this.debitCredit.date = `${year}-${month}-${date}`;
+
+      if (this.debitCredit.title.trim() !== "") {
+        this.$emit("handleFormData", {
+          data: this.debitCredit,
+        });
+      }
+
       event.target.reset();
       this.debitCredit = {
         title: "",
