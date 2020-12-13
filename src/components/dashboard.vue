@@ -1,10 +1,14 @@
 <template>
-  <div class="flex justify-between p-2 bg-red-900 text-orange-200">
+  <div
+    class="flex justify-between px-12 py-4 bg-indigo-900 font-bold text-indigo-100 text-xl"
+  >
     <div>Dashboard</div>
     <div>Total : {{ total }}</div>
   </div>
   <credit-form @handleFormData="handleValue" />
-  <div class="flex justify-around p-3 bg-blue-200">
+  <div
+    class="grid grid-cols-3 text-center px-12 py-4 bg-purple-100 text-purple-900 font-semibold text-lg"
+  >
     <div>Date</div>
     <div>Expenditure</div>
     <div>Amount</div>
@@ -39,12 +43,34 @@ export default {
       const { amount } = data.data;
       this.total += amount;
 
+      console.log("Adding to List");
+
       this.debitcreditList.push(data.data);
+
+      this.updateLocalStorageDebitCredtiList(this.debitcreditList);
+    },
+    updateLocalStorageDebitCredtiList(newValue) {
+      window.localStorage.setItem("__list__", JSON.stringify(newValue));
     },
   },
 
   data: function () {
-    return { total: 0, debitcreditList: [] };
+    // get data from localstorage
+
+    const total = window.localStorage.getItem("__total__") ?? 0;
+    const debitcreditList = window.localStorage.getItem("__list__") ?? "[]";
+
+    return {
+      total: parseFloat(total),
+      debitcreditList: JSON.parse(debitcreditList),
+    };
+  },
+
+  watch: {
+    total(newValue) {
+      window.localStorage.setItem("__total__", newValue);
+    },
   },
 };
 </script>
+
